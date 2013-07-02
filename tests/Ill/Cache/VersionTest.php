@@ -4,7 +4,7 @@ class VersionTest extends PHPUnit_Framework_TestCase {
 	
 	public function testVersionInit() {
 		$version = new \Ill\Cache\Version();
-		$this->assertTrue(is_float($version->getVersion()));
+		$this->assertTrue(is_float($version->get()));
 	}
 
 	public function testVersionIncrement() {
