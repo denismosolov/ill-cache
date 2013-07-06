@@ -40,4 +40,17 @@ class TagTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($tag4->match($tag1));
 		$this->assertFalse($tag1->match($tag4));
 	}
+
+	public function testVersioned1() {
+		$tag = new \Ill\Cache\Tag(self::TEST_KEY_1);
+		$version1 = new \Ill\Cache\Version();
+		$tag->setVersion($version1);
+		$version2 = $tag->getVersion();
+		$this->assertEquals($version1->get(), $version2->get());
+		$version3 = new \Ill\Cache\Version();
+		$tag->setVersion($version3);
+		$version4 = $tag->getVersion();
+		$this->assertEquals($version3->get(), $version4->get());
+		$this->assertNotEquals($version2, $version4);
+	}
 }

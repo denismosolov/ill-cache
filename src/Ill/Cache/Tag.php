@@ -7,13 +7,15 @@ namespace Ill\Cache;
 * @author Denis Mosolov <denismosolov@gmail.com>
 * @package Ill Cache
 */
-class Tag {
+class Tag implements \Ill\Cache\IVersioned {
 	
 	const DEFAULT_TAG_PREFIX = 'Ill:tag::';
 
 	private $_prefix;
 
 	private $_key;
+
+	private $_version;
 
 	public function __construct($tag, $prefix = self::DEFAULT_TAG_PREFIX) {
 		$this->_prefix = $prefix;
@@ -30,5 +32,13 @@ class Tag {
 
 	public function prefix() {
 		return $this->_prefix;
+	}
+
+	public function setVersion(\Ill\Cache\Version $version) {
+		$this->_version = $version;
+	}
+
+	public function getVersion() {
+		return $this->_version;
 	}
 }
