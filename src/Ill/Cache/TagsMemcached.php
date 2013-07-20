@@ -12,6 +12,12 @@ class TagsMemcached {
 	
 	private $_lastSavedTags;
 
+        const RUNTIME_EX_CODE_BAD_TAG_CLASS = '1';
+        const RUNTIME_EX_CODE_BAD_VERSION_STORAGED = '2';
+        const RUNTIME_EX_CODE_BAD_VERSION_CHECKED = '3';
+        const RUNTIME_EX_MESSAGE_BAD_TAG_CLASS = '\Ill\Cache\Tag is expected.';
+        const RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS = '\Ill\Cache\Version is expected.';
+        
 	public function __construct(\Memcached $memcached) {
 		$this->_m = $memcached;
 		$this->_lastSavedKey = NULL;
@@ -31,20 +37,36 @@ class TagsMemcached {
 	}
 
 	public function get($key) {
-		$data = $this->_m->get($key);
-		if ($data instanceof \Ill\Cache\Container) {
-			foreach ($data->tags() as $tag) {
-				// todo: check tags
-				$tv = $tag->getTagVersion();
-				if ($this->_m->get($tag->key())) {
-					return FALSE;
-				}
+		$container = $this->_m->get($key);
+                return FALSE;
+		if ($container instanceof \Ill\Cache\Container) {
+			foreach ($container->tags() as $tag) {
+                                if ($this->tagExpired($tag)) {
+                                    return FALSE;
+                                }
 			}
+                        return $container->data();
 		} else {
 			return FALSE;
 		}
 	}
 
+        public function tagExpired(\Ill\Cache\Tag $checkedTag) {
+            $storagedTag = $this->_m->get($checkedTag->key());
+            if (! $storagedTag instanceof \Ill\Cache\Tag) {
+                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_TAG_CLASS, self::RUNTIME_EX_CODE_BAD_TAG_CLASS);
+            }
+            $storagedVersion = $storagedTag->getVersion();
+            if (! $storagedVersion instanceof \Ill\Cache\Version) {
+                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_STORAGED);
+            }
+            $checkedVersion = $checkedTag->getVersion();
+            if (! $checkedVersion instanceof \Ill\Cache\Version) {
+                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_CHECKED);
+            }
+            return $storagedVersion->expired($checkedVersion);
+        }
+        
 	public function lastValue() {
 		return $this->_lastSavedValue;
 	}
