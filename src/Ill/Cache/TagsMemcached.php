@@ -38,7 +38,7 @@ class TagsMemcached {
 
 	public function get($key) {
 		$container = $this->_m->get($key);
-                
+
 		if ($container instanceof \Ill\Cache\Container) {
 			foreach ($container->tags() as $tag) {
                                 if ($this->tagExpired($tag)) {
@@ -53,6 +53,9 @@ class TagsMemcached {
 
         public function tagExpired(\Ill\Cache\Tag $checkedTag) {
             $storagedTag = $this->_m->get($checkedTag->key());
+            if ($storagedTag === FALSE) {
+                return TRUE;
+            }
             if (! $storagedTag instanceof \Ill\Cache\Tag) {
                 throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_TAG_CLASS, self::RUNTIME_EX_CODE_BAD_TAG_CLASS);
             }
