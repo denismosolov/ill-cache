@@ -23,6 +23,6 @@ class Version {
 	* @return bool - return true if $version is newer than current instance
 	*/
 	public function expired(Version $version) {
-		return $version->get() > $this->get();
+		return (float)$version->get() > (float)$this->get();
 	}
 }
