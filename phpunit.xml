@@ -4,4 +4,8 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+  <php>
+      <var name="memcached_host" value="localhost" />
+      <var name="memcached_port" value="11211" />
+  </php>
 </phpunit>
