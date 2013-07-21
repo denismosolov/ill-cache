@@ -38,7 +38,7 @@ class TagsMemcached {
 
 	public function get($key) {
 		$container = $this->_m->get($key);
-                return FALSE;
+                
 		if ($container instanceof \Ill\Cache\Container) {
 			foreach ($container->tags() as $tag) {
                                 if ($this->tagExpired($tag)) {
