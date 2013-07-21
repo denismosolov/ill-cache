@@ -67,7 +67,7 @@ class TagsMemcached {
             if (! $checkedVersion instanceof \Ill\Cache\Version) {
                 throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_CHECKED);
             }
-            return $storagedVersion->expired($checkedVersion);
+            return $checkedVersion->expired($storagedVersion);
         }
         
 	public function lastValue() {
