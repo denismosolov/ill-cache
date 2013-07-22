@@ -51,6 +51,7 @@ class TagsMemcached {
 		}
 	}
 
+	// @todo: refactor following methods to separate class
         public function tagExpired(\Ill\Cache\Tag $checkedTag) {
             $storagedTag = $this->_m->get($checkedTag->key());
             if ($storagedTag === FALSE) {
@@ -70,6 +71,40 @@ class TagsMemcached {
             return $checkedVersion->expired($storagedVersion);
         }
         
+	public function tagUpdate(\Ill\Cache\Tag $tag) {
+		$version = $tag->getVersion();
+		if (! $version instanceof \Ill\Cache\Version) {
+			// @todo: throw new exception
+		}
+		$this->_m->set($tag->key(), $tag);
+	}
+
+	public function initTag(\Ill\Cache\Tag $tag) {
+		$storaged = $this->_m->get($tag->key());
+		if ($storaged === FALSE) {
+			$tag->setVersion(new \Ill\Cache\Version());
+			if ($this->_m->set($tag->key(), $tag)) {
+				return;
+			} else {
+				// @todo: throw eaception
+			}
+		}
+		if (! $storaged instanceof \Ill\Cache\Tag) {
+			// @todo: throw exception 
+		}
+		$version = $storaged->getVersion();
+		if ($version instanceof \Ill\Cache\Version) {
+			$tag->setVersion($version);
+		} else {
+			$version = new \Ill\Cache\Version();
+			$tag->setVersion($version);
+			if (! $this->_m->set($tag->key(), $tag)) {
+				// @todo: throw eaception
+			}
+		}
+	}
+	// end
+
 	public function lastValue() {
 		return $this->_lastSavedValue;
 	}
