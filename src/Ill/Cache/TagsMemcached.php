@@ -12,17 +12,14 @@ class TagsMemcached {
 	
 	private $_lastSavedTags;
 
-        const RUNTIME_EX_CODE_BAD_TAG_CLASS = '1';
-        const RUNTIME_EX_CODE_BAD_VERSION_STORAGED = '2';
-        const RUNTIME_EX_CODE_BAD_VERSION_CHECKED = '3';
-        const RUNTIME_EX_MESSAGE_BAD_TAG_CLASS = '\Ill\Cache\Tag is expected.';
-        const RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS = '\Ill\Cache\Version is expected.';
+	private $_tagger;
         
 	public function __construct(\Memcached $memcached) {
 		$this->_m = $memcached;
 		$this->_lastSavedKey = NULL;
 		$this->_lastSavedValue = NULL;
 		$this->_lastSavedTags = NULL;
+		$this->_tagger = new \Ill\Cache\Tagger($memcached);
 	}
 
 	public function set($key, $value, $expired, $tags = array()) {
@@ -38,72 +35,25 @@ class TagsMemcached {
 
 	public function get($key) {
 		$container = $this->_m->get($key);
-
 		if ($container instanceof \Ill\Cache\Container) {
 			foreach ($container->tags() as $tag) {
-                                if ($this->tagExpired($tag)) {
-                                    return FALSE;
-                                }
+                if ($this->_tagger->expired($tag)) {
+                    return FALSE;
+                }
 			}
-                        return $container->data();
+            return $container->data();
 		} else {
 			return FALSE;
 		}
 	}
 
-	// @todo: refactor following methods to separate class
-        public function tagExpired(\Ill\Cache\Tag $checkedTag) {
-            $storagedTag = $this->_m->get($checkedTag->key());
-            if ($storagedTag === FALSE) {
-                return TRUE;
-            }
-            if (! $storagedTag instanceof \Ill\Cache\Tag) {
-                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_TAG_CLASS, self::RUNTIME_EX_CODE_BAD_TAG_CLASS);
-            }
-            $storagedVersion = $storagedTag->getVersion();
-            if (! $storagedVersion instanceof \Ill\Cache\Version) {
-                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_STORAGED);
-            }
-            $checkedVersion = $checkedTag->getVersion();
-            if (! $checkedVersion instanceof \Ill\Cache\Version) {
-                throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_CHECKED);
-            }
-            return $checkedVersion->expired($storagedVersion);
-        }
-        
-	public function tagUpdate(\Ill\Cache\Tag $tag) {
-		$version = $tag->getVersion();
-		if (! $version instanceof \Ill\Cache\Version) {
-			// @todo: throw new exception
-		}
-		$this->_m->set($tag->key(), $tag);
+	public function update(\Ill\Cache\Tag $tag) {
+		return $this->_tagger->set($tag);
 	}
 
 	public function initTag(\Ill\Cache\Tag $tag) {
-		$storaged = $this->_m->get($tag->key());
-		if ($storaged === FALSE) {
-			$tag->setVersion(new \Ill\Cache\Version());
-			if ($this->_m->set($tag->key(), $tag)) {
-				return;
-			} else {
-				// @todo: throw eaception
-			}
-		}
-		if (! $storaged instanceof \Ill\Cache\Tag) {
-			// @todo: throw exception 
-		}
-		$version = $storaged->getVersion();
-		if ($version instanceof \Ill\Cache\Version) {
-			$tag->setVersion($version);
-		} else {
-			$version = new \Ill\Cache\Version();
-			$tag->setVersion($version);
-			if (! $this->_m->set($tag->key(), $tag)) {
-				// @todo: throw eaception
-			}
-		}
+		return $this->_tagger->register($tag);
 	}
-	// end
 
 	public function lastValue() {
 		return $this->_lastSavedValue;

@@ -43,7 +43,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
         $this->_memcached->set($tag1->key(), $tag1);
         $this->_memcached->set($tag2->key(), $tag2);
-        $this->setExpectedException('RuntimeException', Ill\Cache\TagsMemcached::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS);
+        $this->setExpectedException('RuntimeException', Ill\Cache\Tagger::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS);
         $tagsMemcached->get(self::TEST_KEY_1);
     }
     
