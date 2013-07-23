@@ -20,7 +20,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     }
 
         public function test1() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $r = $tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10);
         $this->assertTrue($r);
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
@@ -30,7 +30,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     }
     
     public function test2() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $tag1 = new Ill\Cache\Tag(self::TEST_TAG_1);
         $tag2 = new Ill\Cache\Tag(self::TEST_TAG_2);
         $tags = array($tag1, $tag2);
@@ -48,7 +48,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     }
     
     public function test3() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $version1 = new Ill\Cache\Version();
         $version2 = new Ill\Cache\Version();
         $this->assertTrue($version1->expired($version2));
