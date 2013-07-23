@@ -51,7 +51,7 @@ class TagsMemcached {
 		return $this->_tagger->set($tag);
 	}
 
-	public function initTag(\Ill\Cache\Tag $tag) {
+	public function register(\Ill\Cache\Tag $tag) {
 		return $this->_tagger->register($tag);
 	}
 
