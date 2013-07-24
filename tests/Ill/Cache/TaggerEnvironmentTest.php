@@ -20,7 +20,7 @@ class TaggerEnvironmentTest extends PHPUnit_Framework_TestCase {
 
     public function test1() {
         $tagger = new \Ill\Cache\Tagger($this->_memcached);
-        $this->assertFalse($tagger->getRegistered(new \Ill\Cache\Tag(self::TEST_TAG_1)));
+        $this->assertFalse($tagger->get(new \Ill\Cache\Tag(self::TEST_TAG_1)));
     }
 
     public function test2() {

@@ -21,7 +21,7 @@ class Tagger {
 		$this->_m = $memcached;
 	}
 
-	public function getRegistered(\Ill\Cache\Tag $tag) {
+	public function get(\Ill\Cache\Tag $tag) {
 		return $this->_m->get($tag->key());
 	}
 
@@ -34,7 +34,7 @@ class Tagger {
 	}
 
 	public function expired(\Ill\Cache\Tag $checkedTag) {
-        $storagedTag = $this->getRegistered($checkedTag);
+        $storagedTag = $this->get($checkedTag);
         if ($storagedTag === FALSE) {
             return TRUE;
         }
@@ -53,7 +53,7 @@ class Tagger {
 	}
 
 	public function register(\Ill\Cache\Tag $tag) {
-		$storaged = $this->getRegistered($tag);
+		$storaged = $this->get($tag);
 		if ($storaged === FALSE) {
 			$tag->setVersion(new \Ill\Cache\Version());
 			return $this->set($tag);
