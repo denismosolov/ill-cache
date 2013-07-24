@@ -1,4 +1,4 @@
-ill-cache
+Tags for Memcached
 =========
 
-Tags For Memcached
+The purpose of using tags is remove several keys with the same tag in one operation. This implementation of tags is based on versions. It maintains a list of keys with their current versions. It extends 'set' method by set of tags, related with stored data. On 'set' related tags with their versions is assigned to data and stored together in Memcached. On 'get' it takes all stored tags and checks their versions with actual versions. If at least one version has expired - it returns FALSE isntead data although data exists in Memcached. If all stored with data tags has actual versions 'get' returns the data.
