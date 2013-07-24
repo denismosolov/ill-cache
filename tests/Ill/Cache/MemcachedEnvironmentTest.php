@@ -20,7 +20,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     }
 
         public function test1() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $r = $tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10);
         $this->assertTrue($r);
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
@@ -30,7 +30,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     }
     
     public function test2() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $tag1 = new Ill\Cache\Tag(self::TEST_TAG_1);
         $tag2 = new Ill\Cache\Tag(self::TEST_TAG_2);
         $tags = array($tag1, $tag2);
@@ -43,12 +43,12 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
         $this->_memcached->set($tag1->key(), $tag1);
         $this->_memcached->set($tag2->key(), $tag2);
-        $this->setExpectedException('RuntimeException', Ill\Cache\TagsMemcached::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS);
+        $this->setExpectedException('RuntimeException', Ill\Cache\Tagger::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS);
         $tagsMemcached->get(self::TEST_KEY_1);
     }
     
     public function test3() {
-        $tagsMemcached = new Ill\Cache\TagsMemcached($this->_memcached);
+        $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $version1 = new Ill\Cache\Version();
         $version2 = new Ill\Cache\Version();
         $this->assertTrue($version1->expired($version2));
