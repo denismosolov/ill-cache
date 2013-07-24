@@ -34,15 +34,14 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
         $tag1 = new Ill\Cache\Tag(self::TEST_TAG_1);
         $tag2 = new Ill\Cache\Tag(self::TEST_TAG_2);
         $tags = array($tag1, $tag2);
-        $r = $tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags);
-        $this->assertTrue($r);
+        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags));
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
         $this->assertEquals($tagsMemcached->lastValue(), self::TEST_VALUE_1);
         $this->assertEquals($tagsMemcached->lastTags(), $tags);
         $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
         $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
-        $this->_memcached->set($tag1->key(), $tag1);
-        $this->_memcached->set($tag2->key(), $tag2);
+        $tagsMemcached->register($tag1);
+        $tagsMemcached->register($tag2);
         $this->setExpectedException('RuntimeException', Ill\Cache\Tagger::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS);
         $tagsMemcached->get(self::TEST_KEY_1);
     }
@@ -54,25 +53,22 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($version1->expired($version2));
         $this->assertFalse($version2->expired($version1));
         $tag1 = new Ill\Cache\Tag(self::TEST_TAG_1);
-        $tag1->setVersion($version1);
+        $tagsMemcached->register($tag1);
         $tag2 = new Ill\Cache\Tag(self::TEST_TAG_2);
-        $tag2->setVersion($version2);
+        $tagsMemcached->register($tag2);
         $tags = array($tag1, $tag2);
-        $r = $tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags);
-        $this->assertTrue($r);
+        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags));
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
         $this->assertEquals($tagsMemcached->lastValue(), self::TEST_VALUE_1);
         $this->assertEquals($tagsMemcached->lastTags(), $tags);
-        $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
-        $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
-        $this->_memcached->set($tag1->key(), $tag1);
-        $this->_memcached->set($tag2->key(), $tag2);
+        $tagsMemcached->register($tag1);
+        $tagsMemcached->register($tag2);
         $this->assertEquals($tagsMemcached->get(self::TEST_KEY_1), self::TEST_VALUE_1);
         $version3 = new Ill\Cache\Version();
         $this->assertTrue($version1->expired($version3));
         $this->assertTrue($version2->expired($version3));
         $tag1->setVersion($version3);
-        $this->assertTrue($this->_memcached->set($tag1->key(), $tag1));
+        $tagsMemcached->update($tag1);
         $this->assertFalse($tagsMemcached->get(self::TEST_KEY_1));
     }
 }
