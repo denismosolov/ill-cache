@@ -23,7 +23,13 @@ class Memcached {
 	}
 
 	public function set($key, $value, $expired, $tags = array()) {
-        if ($this->_m->set($key, new \Ill\Cache\Container($value, $tags), $expired)) {
+		$_tags = array();
+		foreach ($tags as $tag) {
+			$_tag = new \Ill\Cache\Tag($tag);
+			$this->_tagger->register($_tag);
+			$_tags[] = $_tag;
+		}
+        if ($this->_m->set($key, new \Ill\Cache\Container($value, $_tags), $expired)) {
 			$this->_lastSavedValue = $value;
 	        $this->_lastSavedKey = $key;
 	        $this->_lastSavedTags = $tags;
@@ -47,12 +53,10 @@ class Memcached {
 		}
 	}
 
-	public function update(\Ill\Cache\Tag $tag) {
-		return $this->_tagger->set($tag);
-	}
-
-	public function register(\Ill\Cache\Tag $tag) {
-		return $this->_tagger->register($tag);
+	public function incTagVersion($tag) {
+		$_tag = new \Ill\Cache\Tag($tag);
+		$_tag->setVersion(new \Ill\Cache\Version()); // inc version
+		return $this->_tagger->set($_tag);
 	}
 
 	public function lastValue() {
