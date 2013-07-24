@@ -65,5 +65,6 @@ class Tagger {
 			throw new \RuntimeException(self::RUNTIME_EX_MESSAGE_BAD_VERSION_CLASS, self::RUNTIME_EX_CODE_BAD_VERSION_STORAGED);
 		}
 		$tag->setVersion($storaged->getVersion());
+        return TRUE;
 	}
 }
