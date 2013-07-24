@@ -4,6 +4,12 @@ namespace Ill\Cache;
 
 class Memcached {
 	
+	/*
+	 * Default expired time for keys
+	 * number of seconds in 30 days, read http://www.php.net/manual/en/memcached.expiration.php before change the value
+	 */
+	const DEFAULT_EXPIRED_TIME = 2592000;
+
 	private $_m;
 
 	private $_lastSavedKey;
@@ -22,7 +28,7 @@ class Memcached {
 		$this->_tagger = new \Ill\Cache\Tagger($memcached);
 	}
 
-	public function set($key, $value, $expired, $tags = array()) {
+	public function set($key, $value, $tags = array(), $expired = self::DEFAULT_EXPIRED_TIME) {
 		$_tags = array();
 		foreach ($tags as $tag) {
 			$_tag = new \Ill\Cache\Tag($tag);

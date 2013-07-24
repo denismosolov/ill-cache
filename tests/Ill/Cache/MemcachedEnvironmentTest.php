@@ -21,7 +21,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
 
         public function test1() {
         $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
-        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10));
+        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1));
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
         $this->assertEquals($tagsMemcached->lastValue(), self::TEST_VALUE_1);
         $this->assertEquals($tagsMemcached->lastTags(), array());
@@ -31,7 +31,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     public function test2() {
         $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $tags = array(self::TEST_TAG_1, self::TEST_TAG_2);
-        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags));
+        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, $tags));
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
         $this->assertEquals($tagsMemcached->lastValue(), self::TEST_VALUE_1);
         $this->assertEquals($tagsMemcached->lastTags(), $tags);
@@ -42,7 +42,7 @@ class MemcachedEnvironmentTest extends PHPUnit_Framework_TestCase {
     public function test3() {
         $tagsMemcached = new Ill\Cache\Memcached($this->_memcached);
         $tags = array(self::TEST_TAG_1, self::TEST_TAG_2);
-        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, 10, $tags));
+        $this->assertTrue($tagsMemcached->set(self::TEST_KEY_1, self::TEST_VALUE_1, $tags));
         $this->assertEquals($tagsMemcached->lastKey(), self::TEST_KEY_1);
         $this->assertEquals($tagsMemcached->lastValue(), self::TEST_VALUE_1);
         $this->assertEquals($tagsMemcached->lastTags(), $tags);
