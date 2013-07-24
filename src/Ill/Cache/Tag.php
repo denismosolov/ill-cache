@@ -7,7 +7,7 @@ namespace Ill\Cache;
 * @author Denis Mosolov <denismosolov@gmail.com>
 * @package Ill Cache
 */
-class Tag implements \Ill\Cache\IVersioned {
+class Tag {
 	
 	const DEFAULT_TAG_PREFIX = 'Ill:tag::';
 
